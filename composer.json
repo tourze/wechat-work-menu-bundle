@@ -18,6 +18,8 @@
     "symfony/framework-bundle": "^6.4",
     "tourze/arrayable": "0.0.*",
     "tourze/enum-extra": "~0.0.5",
+    "tourze/doctrine-user-bundle": "0.0.*",
+    "tourze/doctrine-timestamp-bundle": "0.0.*",
     "tourze/easy-admin-attribute": "0.0.*",
     "tourze/wechat-work-bundle": "0.0.*"
   },
