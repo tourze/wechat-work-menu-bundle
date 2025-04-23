@@ -1,1 +1,1 @@
-# wechat-work-menu-bundle
+# 企业微信-应用菜单
