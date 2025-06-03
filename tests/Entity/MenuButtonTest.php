@@ -4,26 +4,26 @@ namespace WechatWorkMenuBundle\Tests\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
-use WechatWorkBundle\Entity\Agent;
-use WechatWorkBundle\Entity\Corp;
+use Tourze\WechatWorkContracts\AgentInterface;
+use Tourze\WechatWorkContracts\CorpInterface;
 use WechatWorkMenuBundle\Entity\MenuButton;
 use WechatWorkMenuBundle\Enum\MenuButtonType;
 
 class MenuButtonTest extends TestCase
 {
     private MenuButton $menuButton;
-    private Corp $corp;
-    private Agent $agent;
+    private CorpInterface $corp;
+    private AgentInterface $agent;
     
     protected function setUp(): void
     {
         $this->menuButton = new MenuButton();
         
         // 模拟Corp对象
-        $this->corp = $this->createMock(Corp::class);
+        $this->corp = $this->createMock(CorpInterface::class);
         
         // 模拟Agent对象
-        $this->agent = $this->createMock(Agent::class);
+        $this->agent = $this->createMock(AgentInterface::class);
     }
     
     public function testConstructor_initializesCollections(): void

@@ -19,8 +19,8 @@ use Tourze\EasyAdmin\Attribute\Column\ExportColumn;
 use Tourze\EasyAdmin\Attribute\Column\ListColumn;
 use Tourze\EasyAdmin\Attribute\Field\FormField;
 use Tourze\EasyAdmin\Attribute\Filter\Filterable;
-use WechatWorkBundle\Entity\Agent;
-use WechatWorkBundle\Entity\Corp;
+use Tourze\WechatWorkContracts\AgentInterface;
+use Tourze\WechatWorkContracts\CorpInterface;
 use WechatWorkMenuBundle\Enum\MenuButtonType;
 use WechatWorkMenuBundle\Repository\MenuButtonRepository;
 
@@ -39,11 +39,11 @@ class MenuButton implements ApiArrayInterface
     private ?int $id = 0;
 
     #[ORM\ManyToOne]
-    private ?Agent $agent = null;
+    private ?AgentInterface $agent = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Corp $corp = null;
+    private ?CorpInterface $corp = null;
 
     #[ORM\Column(type: Types::STRING, length: 120, options: ['comment' => '标签名'])]
     private string $name;
@@ -133,24 +133,24 @@ class MenuButton implements ApiArrayInterface
         return $this;
     }
 
-    public function getAgent(): ?Agent
+    public function getAgent(): ?AgentInterface
     {
         return $this->agent;
     }
 
-    public function setAgent(?Agent $agent): static
+    public function setAgent(?AgentInterface $agent): static
     {
         $this->agent = $agent;
 
         return $this;
     }
 
-    public function getCorp(): ?Corp
+    public function getCorp(): ?CorpInterface
     {
         return $this->corp;
     }
 
-    public function setCorp(?Corp $corp): static
+    public function setCorp(?CorpInterface $corp): static
     {
         $this->corp = $corp;
 
