@@ -23,7 +23,7 @@ class MenuButtonRepositoryTest extends TestCase
         
         $this->assertCount(1, $parameters);
         $this->assertSame('registry', $parameters[0]->getName());
-        $this->assertSame(ManagerRegistry::class, $parameters[0]->getType()->getName());
+        $this->assertSame(ManagerRegistry::class, (string) $parameters[0]->getType());
     }
     
     public function testConstructor_passesCorrectEntityClass(): void

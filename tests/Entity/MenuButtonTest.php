@@ -123,12 +123,12 @@ class MenuButtonTest extends TestCase
     public function testMetadataFields_trackingFunctionality(): void
     {
         // 测试createTime字段
-        $createTime = new \DateTime();
+        $createTime = new \DateTimeImmutable();
         $this->menuButton->setCreateTime($createTime);
         $this->assertSame($createTime, $this->menuButton->getCreateTime());
         
         // 测试updateTime字段
-        $updateTime = new \DateTime();
+        $updateTime = new \DateTimeImmutable();
         $this->menuButton->setUpdateTime($updateTime);
         $this->assertSame($updateTime, $this->menuButton->getUpdateTime());
         
@@ -155,8 +155,7 @@ class MenuButtonTest extends TestCase
         // 获取API数组
         $apiArray = $this->menuButton->retrieveApiArray();
         
-        // 验证API数组包含预期的数据
-        $this->assertIsArray($apiArray);
+        // API数组必然是数组类型
         $this->assertArrayHasKey('name', $apiArray);
         $this->assertArrayHasKey('type', $apiArray);
         $this->assertArrayHasKey('key', $apiArray);
