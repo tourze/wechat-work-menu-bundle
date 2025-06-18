@@ -12,10 +12,6 @@ use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
 use Tourze\DoctrineUserBundle\Traits\BlameableAware;
-use Tourze\EasyAdmin\Attribute\Column\BoolColumn;
-use Tourze\EasyAdmin\Attribute\Column\ExportColumn;
-use Tourze\EasyAdmin\Attribute\Column\ListColumn;
-use Tourze\EasyAdmin\Attribute\Field\FormField;
 use Tourze\WechatWorkContracts\AgentInterface;
 use Tourze\WechatWorkContracts\CorpInterface;
 use WechatWorkMenuBundle\Enum\MenuButtonType;
@@ -30,8 +26,6 @@ class MenuButton implements ApiArrayInterface
 {
     use TimestampableAware;
     use BlameableAware;
-    #[ListColumn(order: -1)]
-    #[ExportColumn]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
@@ -74,17 +68,12 @@ class MenuButton implements ApiArrayInterface
      */
     #[IndexColumn]
     #[Groups(['admin_curd', 'api_tree', 'restful_read', 'restful_write'])]
-    #[FormField]
-    #[ListColumn(order: 95, sorter: true)]
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['default' => '0', 'comment' => '次序值'])]
     private ?int $sortNumber = 0;
 
-    #[BoolColumn]
     #[IndexColumn]
     #[TrackColumn]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
-    #[ListColumn(order: 97)]
-    #[FormField(order: 97)]
     private ?bool $valid = false;
 
 

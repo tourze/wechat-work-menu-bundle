@@ -156,7 +156,6 @@ class MenuButtonTest extends TestCase
         $apiArray = $this->menuButton->retrieveApiArray();
         
         // 验证API数组包含预期的数据
-        $this->assertIsArray($apiArray);
         $this->assertArrayHasKey('name', $apiArray);
         $this->assertArrayHasKey('type', $apiArray);
         $this->assertArrayHasKey('key', $apiArray);
