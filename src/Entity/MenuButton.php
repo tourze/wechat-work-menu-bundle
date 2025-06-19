@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Stringable;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Tourze\Arrayable\ApiArrayInterface;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
@@ -22,7 +23,7 @@ use WechatWorkMenuBundle\Repository\MenuButtonRepository;
  */
 #[ORM\Entity(repositoryClass: MenuButtonRepository::class)]
 #[ORM\Table(name: 'wechat_work_menu_button', options: ['comment' => '菜单按钮'])]
-class MenuButton implements ApiArrayInterface
+class MenuButton implements ApiArrayInterface, Stringable
 {
     use TimestampableAware;
     use BlameableAware;
@@ -41,19 +42,19 @@ class MenuButton implements ApiArrayInterface
     #[ORM\Column(type: Types::STRING, length: 120, options: ['comment' => '标签名'])]
     private string $name;
 
-    #[ORM\Column(length: 40, nullable: true, enumType: MenuButtonType::class)]
+    #[ORM\Column(length: 40, nullable: true, enumType: MenuButtonType::class, options: ['comment' => '按钮类型'])]
     private ?MenuButtonType $type = null;
 
-    #[ORM\Column(length: 120, nullable: true)]
+    #[ORM\Column(length: 120, nullable: true, options: ['comment' => '点击键值'])]
     private ?string $clickKey = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true, options: ['comment' => '网页链接'])]
     private ?string $viewUrl = null;
 
-    #[ORM\Column(length: 20, nullable: true)]
+    #[ORM\Column(length: 20, nullable: true, options: ['comment' => '小程序AppId'])]
     private ?string $miniProgramAppId = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true, options: ['comment' => '小程序路径'])]
     private ?string $miniProgramPath = null;
 
     #[ORM\ManyToOne(targetEntity: MenuButton::class)]
@@ -63,9 +64,6 @@ class MenuButton implements ApiArrayInterface
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: MenuButton::class)]
     private Collection $children;
 
-    /**
-     * order值大的排序靠前。有效的值范围是[0, 2^32].
-     */
     #[IndexColumn]
     #[Groups(['admin_curd', 'api_tree', 'restful_read', 'restful_write'])]
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['default' => '0', 'comment' => '次序值'])]
@@ -284,5 +282,10 @@ class MenuButton implements ApiArrayInterface
         }
 
         return $result;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

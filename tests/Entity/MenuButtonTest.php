@@ -123,12 +123,12 @@ class MenuButtonTest extends TestCase
     public function testMetadataFields_trackingFunctionality(): void
     {
         // 测试createTime字段
-        $createTime = new \DateTime();
+        $createTime = new \DateTimeImmutable();
         $this->menuButton->setCreateTime($createTime);
         $this->assertSame($createTime, $this->menuButton->getCreateTime());
         
         // 测试updateTime字段
-        $updateTime = new \DateTime();
+        $updateTime = new \DateTimeImmutable();
         $this->menuButton->setUpdateTime($updateTime);
         $this->assertSame($updateTime, $this->menuButton->getUpdateTime());
         
