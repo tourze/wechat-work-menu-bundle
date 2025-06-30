@@ -1,6 +1,6 @@
 <?php
 
-namespace WechatWorkMenuBundle\Entity;
+namespace Tourze\WechatWorkMenuBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,8 +15,9 @@ use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
 use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 use Tourze\WechatWorkContracts\AgentInterface;
 use Tourze\WechatWorkContracts\CorpInterface;
-use WechatWorkMenuBundle\Enum\MenuButtonType;
-use WechatWorkMenuBundle\Repository\MenuButtonRepository;
+use Tourze\WechatWorkMenuBundle\Enum\MenuButtonType;
+use Tourze\WechatWorkMenuBundle\Exception\MenuButtonException;
+use Tourze\WechatWorkMenuBundle\Repository\MenuButtonRepository;
 
 /**
  * @see https://developer.work.weixin.qq.com/document/path/90231
@@ -65,7 +66,7 @@ class MenuButton implements ApiArrayInterface, Stringable
     private Collection $children;
 
     #[IndexColumn]
-    #[Groups(['admin_curd', 'api_tree', 'restful_read', 'restful_write'])]
+    #[Groups(groups: ['admin_curd', 'api_tree', 'restful_read', 'restful_write'])]
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['default' => '0', 'comment' => '次序值'])]
     private ?int $sortNumber = 0;
 
@@ -263,7 +264,7 @@ class MenuButton implements ApiArrayInterface, Stringable
         }
 
         if (null === $this->getType()) {
-            throw new \RuntimeException('按钮类型不能为空');
+            throw new MenuButtonException('按钮类型不能为空');
         }
 
         $result = [

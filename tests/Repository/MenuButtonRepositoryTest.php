@@ -1,10 +1,10 @@
 <?php
 
-namespace WechatWorkMenuBundle\Tests\Repository;
+namespace Tourze\WechatWorkMenuBundle\Tests\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
-use WechatWorkMenuBundle\Repository\MenuButtonRepository;
+use Tourze\WechatWorkMenuBundle\Repository\MenuButtonRepository;
 
 class MenuButtonRepositoryTest extends TestCase
 {

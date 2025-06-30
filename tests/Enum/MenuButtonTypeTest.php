@@ -1,9 +1,9 @@
 <?php
 
-namespace WechatWorkMenuBundle\Tests\Enum;
+namespace Tourze\WechatWorkMenuBundle\Tests\Enum;
 
 use PHPUnit\Framework\TestCase;
-use WechatWorkMenuBundle\Enum\MenuButtonType;
+use Tourze\WechatWorkMenuBundle\Enum\MenuButtonType;
 
 class MenuButtonTypeTest extends TestCase
 {

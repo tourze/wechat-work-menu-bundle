@@ -1,10 +1,10 @@
 <?php
 
-namespace WechatWorkMenuBundle\Repository;
+namespace Tourze\WechatWorkMenuBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use WechatWorkMenuBundle\Entity\MenuButton;
+use Tourze\WechatWorkMenuBundle\Entity\MenuButton;
 
 /**
  * @method MenuButton|null find($id, $lockMode = null, $lockVersion = null)

@@ -36,12 +36,12 @@
   },
   "autoload": {
     "psr-4": {
-      "WechatWorkMenuBundle\\": "src"
+      "Tourze\\WechatWorkMenuBundle\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "WechatWorkMenuBundle\\Tests\\": "tests"
+      "Tourze\\WechatWorkMenuBundle\\Tests\\": "tests"
     }
   }
 }

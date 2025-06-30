@@ -1,9 +1,9 @@
 <?php
 
-namespace WechatWorkMenuBundle\Tests\Integration;
+namespace Tourze\WechatWorkMenuBundle\Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
-use WechatWorkMenuBundle\WechatWorkMenuBundle;
+use Tourze\WechatWorkMenuBundle\WechatWorkMenuBundle;
 
 class BundleIntegrationTest extends TestCase
 {

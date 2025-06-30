@@ -1,13 +1,13 @@
 <?php
 
-namespace WechatWorkMenuBundle\Tests\Entity;
+namespace Tourze\WechatWorkMenuBundle\Tests\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Tourze\WechatWorkContracts\AgentInterface;
 use Tourze\WechatWorkContracts\CorpInterface;
-use WechatWorkMenuBundle\Entity\MenuButton;
-use WechatWorkMenuBundle\Enum\MenuButtonType;
+use Tourze\WechatWorkMenuBundle\Entity\MenuButton;
+use Tourze\WechatWorkMenuBundle\Enum\MenuButtonType;
 
 class MenuButtonTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace WechatWorkMenuBundle\Controller;
+namespace Tourze\WechatWorkMenuBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

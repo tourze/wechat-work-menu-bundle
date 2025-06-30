@@ -1,6 +1,6 @@
 <?php
 
-namespace WechatWorkMenuBundle\Enum;
+namespace Tourze\WechatWorkMenuBundle\Enum;
 
 use Tourze\EnumExtra\Itemable;
 use Tourze\EnumExtra\ItemTrait;

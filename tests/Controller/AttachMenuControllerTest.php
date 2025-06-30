@@ -1,6 +1,6 @@
 <?php
 
-namespace WechatWorkMenuBundle\Tests\Controller;
+namespace Tourze\WechatWorkMenuBundle\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace WechatWorkMenuBundle;
+namespace Tourze\WechatWorkMenuBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
