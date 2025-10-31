@@ -1,62 +1,72 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\WechatWorkMenuBundle\Tests\Controller;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Tourze\PHPUnitSymfonyWebTest\AbstractWebTestCase;
+use Tourze\WechatWorkMenuBundle\Controller\AttachMenuController;
 
-class AttachMenuControllerTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(AttachMenuController::class)]
+#[RunTestsInSeparateProcesses]
+final class AttachMenuControllerTest extends AbstractWebTestCase
 {
-    public function testCrm1_methodExists(): void
+    public function testEnsureTestMethodNotAllowed(): void
     {
-        // 验证方法存在
-        $this->assertFileExists(__DIR__ . '/../../src/Controller/AttachMenuController.php');
-        $controllerFile = file_get_contents(__DIR__ . '/../../src/Controller/AttachMenuController.php');
-        $this->assertStringContainsString('public function crm1()', $controllerFile);
+        $reflection = new \ReflectionClass(self::class);
+        $method = $reflection->getMethod('testMethodNotAllowed');
+        $attributes = $method->getAttributes(DataProvider::class);
+        $this->assertCount(1, $attributes);
+
+        $attribute = $attributes[0]->newInstance();
+        $this->assertEquals('provideNotAllowedMethods', $attribute->methodName());
     }
-    
-    public function testCrm1_methodContentAndStructure(): void
+
+    public function testControllerExists(): void
     {
-        $controllerFile = file_get_contents(__DIR__ . '/../../src/Controller/AttachMenuController.php');
-        
-        // 验证方法内容包含预期结构
-        $this->assertStringContainsString('public function crm1()', $controllerFile);
-        $this->assertStringContainsString('return $this->json(', $controllerFile);
-        $this->assertStringContainsString('time', $controllerFile);
-        $this->assertStringContainsString('method', $controllerFile);
+        $controller = new AttachMenuController();
+
+        $this->assertInstanceOf(AttachMenuController::class, $controller);
     }
-    
-    public function testCrm2_methodExists(): void
+
+    public function testControllerExtendsAbstractController(): void
     {
-        // 验证方法存在
-        $this->assertFileExists(__DIR__ . '/../../src/Controller/AttachMenuController.php');
-        $controllerFile = file_get_contents(__DIR__ . '/../../src/Controller/AttachMenuController.php');
-        $this->assertStringContainsString('public function crm2()', $controllerFile);
+        $controller = new AttachMenuController();
+
+        $this->assertInstanceOf(AbstractController::class, $controller);
     }
-    
-    public function testCrm2_methodContentAndStructure(): void
+
+    public function testInvokeMethod(): void
     {
-        $controllerFile = file_get_contents(__DIR__ . '/../../src/Controller/AttachMenuController.php');
-        
-        // 验证方法内容包含预期结构
-        $this->assertStringContainsString('public function crm2()', $controllerFile);
-        $this->assertStringContainsString('return $this->json(', $controllerFile);
-        $this->assertStringContainsString('time', $controllerFile);
-        $this->assertStringContainsString('method', $controllerFile);
+        $client = self::createClientWithDatabase();
+
+        $client->request('GET', '/wechat-work/menu/attach');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $content = $client->getResponse()->getContent();
+        $this->assertNotFalse($content);
+        $this->assertJson($content);
+
+        $data = json_decode($content, true);
+        $this->assertIsArray($data);
+        $this->assertEquals('Wechat Work Menu Attach Controller', $data['message']);
     }
-    
-    public function testBothMethods_followSamePattern(): void
+
+    #[DataProvider('provideNotAllowedMethods')]
+    public function testMethodNotAllowed(string $method): void
     {
-        $controllerFile = file_get_contents(__DIR__ . '/../../src/Controller/AttachMenuController.php');
-        
-        // 解析方法体
-        preg_match('/public function crm1\(\)[^{]*{(.*?)}/s', $controllerFile, $crm1Body);
-        preg_match('/public function crm2\(\)[^{]*{(.*?)}/s', $controllerFile, $crm2Body);
-        
-        // 移除方法名称的差异，比较主体结构
-        $crm1Pattern = str_replace('crm1', 'METHOD', $crm1Body[1] ?? '');
-        $crm2Pattern = str_replace('crm2', 'METHOD', $crm2Body[1] ?? '');
-        
-        // 检查两个方法是否遵循相同的模式
-        $this->assertEquals($crm1Pattern, $crm2Pattern);
+        $client = self::createClientWithDatabase();
+
+        $this->expectException(MethodNotAllowedHttpException::class);
+        $client->request($method, '/wechat-work/menu/attach');
     }
-} 
+}

@@ -1,201 +1,270 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\WechatWorkMenuBundle\Tests\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 use Tourze\WechatWorkContracts\AgentInterface;
 use Tourze\WechatWorkContracts\CorpInterface;
 use Tourze\WechatWorkMenuBundle\Entity\MenuButton;
 use Tourze\WechatWorkMenuBundle\Enum\MenuButtonType;
+use Tourze\WechatWorkMenuBundle\Exception\MenuButtonException;
 
-class MenuButtonTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(MenuButton::class)]
+final class MenuButtonTest extends AbstractEntityTestCase
 {
-    private MenuButton $menuButton;
-    private CorpInterface $corp;
-    private AgentInterface $agent;
-    
-    protected function setUp(): void
+    protected function createEntity(): object
     {
-        $this->menuButton = new MenuButton();
-        
-        // 模拟Corp对象
-        $this->corp = $this->createMock(CorpInterface::class);
-        
-        // 模拟Agent对象
-        $this->agent = $this->createMock(AgentInterface::class);
+        return new MenuButton();
     }
-    
-    public function testConstructor_initializesCollections(): void
+
+    /**
+     * @return iterable<array{string, mixed}>
+     */
+    public static function propertiesProvider(): iterable
     {
-        // 测试构造函数是否正确初始化了children集合
-        $this->assertInstanceOf(ArrayCollection::class, $this->menuButton->getChildren());
-        $this->assertTrue($this->menuButton->getChildren()->isEmpty());
+        return [
+            'name' => ['name', 'test_value'],
+        ];
     }
-    
-    public function testBasicProperties_gettersAndSetters(): void
+
+    public function testConstructor(): void
     {
-        // 测试名称字段
-        $name = 'Test Button';
-        $this->menuButton->setName($name);
-        $this->assertSame($name, $this->menuButton->getName());
-        
-        // 测试类型字段
-        $type = MenuButtonType::Click;
-        $this->menuButton->setType($type);
-        $this->assertSame($type, $this->menuButton->getType());
-        
-        // 测试点击键字段
-        $clickKey = 'key_123';
-        $this->menuButton->setClickKey($clickKey);
-        $this->assertSame($clickKey, $this->menuButton->getClickKey());
-        
-        // 测试URL字段
-        $viewUrl = 'https://example.com';
-        $this->menuButton->setViewUrl($viewUrl);
-        $this->assertSame($viewUrl, $this->menuButton->getViewUrl());
-        
-        // 测试小程序AppID
-        $miniProgramAppId = 'wx123456';
-        $this->menuButton->setMiniProgramAppId($miniProgramAppId);
-        $this->assertSame($miniProgramAppId, $this->menuButton->getMiniProgramAppId());
-        
-        // 测试小程序路径
-        $miniProgramPath = 'pages/index/index';
-        $this->menuButton->setMiniProgramPath($miniProgramPath);
-        $this->assertSame($miniProgramPath, $this->menuButton->getMiniProgramPath());
-        
-        // 测试排序号
-        $sortNumber = 100;
-        $this->menuButton->setSortNumber($sortNumber);
-        $this->assertSame($sortNumber, $this->menuButton->getSortNumber());
-        
-        // 测试有效状态
-        $valid = true;
-        $this->menuButton->setValid($valid);
-        $this->assertSame($valid, $this->menuButton->isValid());
-        
-        // 测试公司关联
-        $this->menuButton->setCorp($this->corp);
-        $this->assertSame($this->corp, $this->menuButton->getCorp());
-        
-        // 测试应用关联
-        $this->menuButton->setAgent($this->agent);
-        $this->assertSame($this->agent, $this->menuButton->getAgent());
+        $menuButton = new MenuButton();
+
+        $this->assertNull($menuButton->getId());
+        $this->assertNull($menuButton->getAgent());
+        $this->assertNull($menuButton->getCorp());
+        $this->assertCount(0, $menuButton->getChildren());
+        $this->assertSame(0, $menuButton->getSortNumber());
+        $this->assertFalse($menuButton->isValid());
     }
-    
-    public function testRelationship_parentChild(): void
+
+    public function testSetName(): void
     {
-        // 创建父按钮和子按钮
-        $parentButton = new MenuButton();
-        $parentButton->setName('Parent Button');
-        
-        $childButton1 = new MenuButton();
-        $childButton1->setName('Child Button 1');
-        
-        $childButton2 = new MenuButton();
-        $childButton2->setName('Child Button 2');
-        
-        // 测试设置父按钮
-        $childButton1->setParent($parentButton);
-        $this->assertSame($parentButton, $childButton1->getParent());
-        
-        // 测试添加子按钮
-        $parentButton->addChild($childButton1);
-        $parentButton->addChild($childButton2);
-        
-        // 验证子按钮集合
-        $this->assertCount(2, $parentButton->getChildren());
-        $this->assertTrue($parentButton->getChildren()->contains($childButton1));
-        $this->assertTrue($parentButton->getChildren()->contains($childButton2));
-        
-        // 测试移除子按钮
-        $parentButton->removeChild($childButton1);
-        $this->assertCount(1, $parentButton->getChildren());
-        $this->assertFalse($parentButton->getChildren()->contains($childButton1));
-        $this->assertTrue($parentButton->getChildren()->contains($childButton2));
-        
-        // 测试重复添加相同子按钮
-        $parentButton->addChild($childButton2);
-        $this->assertCount(1, $parentButton->getChildren());
+        $menuButton = new MenuButton();
+        $menuButton->setName('测试菜单');
+
+        $this->assertSame('测试菜单', $menuButton->getName());
     }
-    
-    public function testMetadataFields_trackingFunctionality(): void
+
+    public function testSetAgent(): void
     {
-        // 测试createTime字段
-        $createTime = new \DateTimeImmutable();
-        $this->menuButton->setCreateTime($createTime);
-        $this->assertSame($createTime, $this->menuButton->getCreateTime());
-        
-        // 测试updateTime字段
-        $updateTime = new \DateTimeImmutable();
-        $this->menuButton->setUpdateTime($updateTime);
-        $this->assertSame($updateTime, $this->menuButton->getUpdateTime());
-        
-        // 测试createdBy字段
-        $createdBy = 'admin';
-        $this->menuButton->setCreatedBy($createdBy);
-        $this->assertSame($createdBy, $this->menuButton->getCreatedBy());
-        
-        // 测试updatedBy字段
-        $updatedBy = 'manager';
-        $this->menuButton->setUpdatedBy($updatedBy);
-        $this->assertSame($updatedBy, $this->menuButton->getUpdatedBy());
+        $menuButton = new MenuButton();
+        $agent = $this->createMock(AgentInterface::class);
+        $menuButton->setAgent($agent);
+
+        $this->assertSame($agent, $menuButton->getAgent());
     }
-    
-    public function testApiArray_containsCorrectData(): void
+
+    public function testSetCorp(): void
     {
-        // 准备测试数据
-        $this->menuButton->setName('API Button');
-        $this->menuButton->setType(MenuButtonType::Click);
-        $this->menuButton->setClickKey('api_key');
-        $this->menuButton->setSortNumber(50);
-        $this->menuButton->setValid(true);
-        
-        // 获取API数组
-        $apiArray = $this->menuButton->retrieveApiArray();
-        
-        // 验证API数组包含预期的数据
-        $this->assertArrayHasKey('name', $apiArray);
-        $this->assertArrayHasKey('type', $apiArray);
-        $this->assertArrayHasKey('key', $apiArray);
-        
-        $this->assertEquals('API Button', $apiArray['name']);
-        $this->assertEquals('click', $apiArray['type']);
-        $this->assertEquals('api_key', $apiArray['key']);
+        $menuButton = new MenuButton();
+        $corp = $this->createMock(CorpInterface::class);
+        $menuButton->setCorp($corp);
+
+        $this->assertSame($corp, $menuButton->getCorp());
     }
-    
-    public function testEdgeCases_nullValues(): void
+
+    public function testSetType(): void
     {
-        // 测试可空字段的空值处理
-        $this->menuButton->setClickKey(null);
-        $this->assertNull($this->menuButton->getClickKey());
-        
-        $this->menuButton->setViewUrl(null);
-        $this->assertNull($this->menuButton->getViewUrl());
-        
-        $this->menuButton->setType(null);
-        $this->assertNull($this->menuButton->getType());
-        
-        $this->menuButton->setMiniProgramAppId(null);
-        $this->assertNull($this->menuButton->getMiniProgramAppId());
-        
-        $this->menuButton->setMiniProgramPath(null);
-        $this->assertNull($this->menuButton->getMiniProgramPath());
-        
-        $this->menuButton->setParent(null);
-        $this->assertNull($this->menuButton->getParent());
+        $menuButton = new MenuButton();
+        $menuButton->setType(MenuButtonType::Click);
+
+        $this->assertSame(MenuButtonType::Click, $menuButton->getType());
     }
-    
-    public function testEdgeCases_longValues(): void
+
+    public function testSetClickKey(): void
     {
-        // 测试长文本处理
-        $longName = str_repeat('a', 120);
-        $this->menuButton->setName($longName);
-        $this->assertSame($longName, $this->menuButton->getName());
-        
-        $longUrl = 'https://example.com/' . str_repeat('path/', 50);
-        $this->menuButton->setViewUrl($longUrl);
-        $this->assertSame($longUrl, $this->menuButton->getViewUrl());
+        $menuButton = new MenuButton();
+        $menuButton->setClickKey('test_key');
+
+        $this->assertSame('test_key', $menuButton->getClickKey());
     }
-} 
+
+    public function testSetViewUrl(): void
+    {
+        $menuButton = new MenuButton();
+        $menuButton->setViewUrl('https://example.com');
+
+        $this->assertSame('https://example.com', $menuButton->getViewUrl());
+    }
+
+    public function testSetMiniProgramAppId(): void
+    {
+        $menuButton = new MenuButton();
+        $menuButton->setMiniProgramAppId('wx123456');
+
+        $this->assertSame('wx123456', $menuButton->getMiniProgramAppId());
+    }
+
+    public function testSetMiniProgramPath(): void
+    {
+        $menuButton = new MenuButton();
+        $menuButton->setMiniProgramPath('/pages/index/index');
+
+        $this->assertSame('/pages/index/index', $menuButton->getMiniProgramPath());
+    }
+
+    public function testParentChildRelationship(): void
+    {
+        $parent = new MenuButton();
+        $parent->setName('父菜单');
+
+        $child = new MenuButton();
+        $child->setName('子菜单');
+
+        // 测试添加子菜单
+        $parent->addChild($child);
+        $this->assertSame($parent, $child->getParent());
+        $this->assertTrue($parent->getChildren()->contains($child));
+
+        // 测试移除子菜单
+        $parent->removeChild($child);
+        $this->assertNull($child->getParent());
+        $this->assertFalse($parent->getChildren()->contains($child));
+    }
+
+    public function testSetSortNumber(): void
+    {
+        $menuButton = new MenuButton();
+        $menuButton->setSortNumber(10);
+
+        $this->assertSame(10, $menuButton->getSortNumber());
+    }
+
+    public function testSetValid(): void
+    {
+        $menuButton = new MenuButton();
+        $menuButton->setValid(true);
+
+        $this->assertTrue($menuButton->isValid());
+    }
+
+    public function testRetrieveApiArrayWithSubMenu(): void
+    {
+        $parent = new MenuButton();
+        $parent->setName('父菜单');
+
+        $child = new MenuButton();
+        $child->setName('子菜单');
+        $child->setType(MenuButtonType::Click);
+        $child->setClickKey('child_key');
+
+        $parent->addChild($child);
+
+        $result = $parent->retrieveApiArray();
+
+        $this->assertSame('父菜单', $result['name']);
+        $this->assertArrayHasKey('sub_button', $result);
+        $this->assertIsArray($result['sub_button']);
+        $subButtons = $result['sub_button'];
+        $this->assertCount(1, $subButtons);
+        $this->assertArrayHasKey(0, $subButtons);
+        $this->assertIsArray($subButtons[0]);
+        $firstChild = $subButtons[0];
+        $this->assertSame('子菜单', $firstChild['name']);
+        $this->assertSame('click', $firstChild['type']);
+        $this->assertSame('child_key', $firstChild['key']);
+    }
+
+    public function testRetrieveApiArrayWithClickType(): void
+    {
+        $menuButton = new MenuButton();
+        $menuButton->setName('点击菜单');
+        $menuButton->setType(MenuButtonType::Click);
+        $menuButton->setClickKey('test_key');
+
+        $result = $menuButton->retrieveApiArray();
+
+        $this->assertSame('click', $result['type']);
+        $this->assertSame('点击菜单', $result['name']);
+        $this->assertSame('test_key', $result['key']);
+    }
+
+    public function testRetrieveApiArrayWithViewType(): void
+    {
+        $menuButton = new MenuButton();
+        $menuButton->setName('链接菜单');
+        $menuButton->setType(MenuButtonType::View);
+        $menuButton->setViewUrl('https://example.com');
+
+        $result = $menuButton->retrieveApiArray();
+
+        $this->assertSame('view', $result['type']);
+        $this->assertSame('链接菜单', $result['name']);
+        $this->assertSame('https://example.com', $result['url']);
+    }
+
+    public function testRetrieveApiArrayWithMiniProgramType(): void
+    {
+        $menuButton = new MenuButton();
+        $menuButton->setName('小程序菜单');
+        $menuButton->setType(MenuButtonType::ViewMiniProgram);
+        $menuButton->setMiniProgramAppId('wx123456');
+        $menuButton->setMiniProgramPath('/pages/index/index');
+
+        $result = $menuButton->retrieveApiArray();
+
+        $this->assertSame('view_miniprogram', $result['type']);
+        $this->assertSame('小程序菜单', $result['name']);
+        $this->assertSame('wx123456', $result['appid']);
+        $this->assertSame('/pages/index/index', $result['pagepath']);
+    }
+
+    public function testRetrieveApiArrayThrowsExceptionWithoutType(): void
+    {
+        $menuButton = new MenuButton();
+        $menuButton->setName('测试菜单');
+
+        $this->expectException(MenuButtonException::class);
+        $this->expectExceptionMessage('按钮类型不能为空');
+
+        $menuButton->retrieveApiArray();
+    }
+
+    public function testToString(): void
+    {
+        $menuButton = new MenuButton();
+        $menuButton->setName('测试菜单');
+
+        $this->assertSame('测试菜单', (string) $menuButton);
+    }
+
+    public function testFluentInterface(): void
+    {
+        $menuButton = new MenuButton();
+        $agent = $this->createMock(AgentInterface::class);
+        $corp = $this->createMock(CorpInterface::class);
+
+        // 现在setter方法返回void，所以分别设置属性
+        $menuButton->setName('测试菜单');
+        $menuButton->setAgent($agent);
+        $menuButton->setCorp($corp);
+        $menuButton->setType(MenuButtonType::Click);
+        $menuButton->setClickKey('test_key');
+        $menuButton->setViewUrl('https://example.com');
+        $menuButton->setMiniProgramAppId('wx123456');
+        $menuButton->setMiniProgramPath('/pages/index/index');
+        $menuButton->setSortNumber(10);
+        $menuButton->setValid(true);
+
+        // 验证属性已正确设置
+        $this->assertSame('测试菜单', $menuButton->getName());
+        $this->assertSame($agent, $menuButton->getAgent());
+        $this->assertSame($corp, $menuButton->getCorp());
+        $this->assertSame(MenuButtonType::Click, $menuButton->getType());
+        $this->assertSame('test_key', $menuButton->getClickKey());
+        $this->assertSame('https://example.com', $menuButton->getViewUrl());
+        $this->assertSame('wx123456', $menuButton->getMiniProgramAppId());
+        $this->assertSame('/pages/index/index', $menuButton->getMiniProgramPath());
+        $this->assertSame(10, $menuButton->getSortNumber());
+        $this->assertTrue($menuButton->isValid());
+    }
+}

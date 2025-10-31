@@ -2,12 +2,17 @@
 
 namespace Tourze\WechatWorkMenuBundle\Tests\Enum;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Tourze\PHPUnitEnum\AbstractEnumTestCase;
 use Tourze\WechatWorkMenuBundle\Enum\MenuButtonType;
 
-class MenuButtonTypeTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(MenuButtonType::class)]
+final class MenuButtonTypeTest extends AbstractEnumTestCase
 {
-    public function testEnumValues_existAndAccessible(): void
+    public function testEnumValuesExistAndAccessible(): void
     {
         // 测试所有枚举值是否存在
         $this->assertSame('click', MenuButtonType::Click->value);
@@ -21,7 +26,7 @@ class MenuButtonTypeTest extends TestCase
         $this->assertSame('view_miniprogram', MenuButtonType::ViewMiniProgram->value);
     }
 
-    public function testGetLabel_returnsCorrectLabels(): void
+    public function testGetLabelReturnsCorrectLabels(): void
     {
         // 测试标签值是否正确
         $this->assertSame('点击推事件', MenuButtonType::Click->getLabel());
@@ -36,17 +41,20 @@ class MenuButtonTypeTest extends TestCase
         $this->assertSame('跳转到小程序', MenuButtonType::ViewMiniProgram->getLabel());
     }
 
-    public function testEnumCases_areComplete(): void
+    public function testEnumCasesAreComplete(): void
     {
         // 测试枚举用例
         $cases = MenuButtonType::cases();
         $this->assertCount(9, $cases);
-        
-        // 验证类型
+
+        // 验证每个case都有对应的value和label
         foreach ($cases as $case) {
-            $this->assertInstanceOf(MenuButtonType::class, $case);
+            $this->assertIsString($case->value, 'Enum case should have a string value');
+            $this->assertIsString($case->getLabel(), 'Enum case should have a label');
+            $this->assertNotEmpty($case->value, 'Enum value should not be empty');
+            $this->assertNotEmpty($case->getLabel(), 'Enum label should not be empty');
         }
-        
+
         // 验证包含所有枚举值
         $this->assertContains(MenuButtonType::Click, $cases);
         $this->assertContains(MenuButtonType::View, $cases);
@@ -59,7 +67,7 @@ class MenuButtonTypeTest extends TestCase
         $this->assertContains(MenuButtonType::ViewMiniProgram, $cases);
     }
 
-    public function testTryFrom_withValidValue(): void
+    public function testTryFromWithValidValue(): void
     {
         // 测试通过值获取枚举实例
         $this->assertSame(MenuButtonType::Click, MenuButtonType::tryFrom('click'));
@@ -67,11 +75,19 @@ class MenuButtonTypeTest extends TestCase
         $this->assertSame(MenuButtonType::ViewMiniProgram, MenuButtonType::tryFrom('view_miniprogram'));
     }
 
-    public function testTryFrom_withInvalidValue(): void
+    public function testToArray(): void
     {
-        // 测试无效值
-        $this->assertNull(MenuButtonType::tryFrom('invalid_type'));
-        $this->assertNull(MenuButtonType::tryFrom(''));
-        // 不传 null 避免警告
+        // 测试 toArray 方法 - 返回当前枚举实例的键值对
+        $array = MenuButtonType::Click->toArray();
+
+        // 验证是否是数组
+        $this->assertIsArray($array);
+
+        // 验证只包含当前枚举值的信息
+        $this->assertCount(2, $array);
+
+        // 验证键值对正确
+        $this->assertSame('click', $array['value']);
+        $this->assertSame('点击推事件', $array['label']);
     }
-} 
+}

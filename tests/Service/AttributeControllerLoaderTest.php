@@ -4,39 +4,59 @@ declare(strict_types=1);
 
 namespace Tourze\WechatWorkMenuBundle\Tests\Service;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\RouteCollection;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
+use Tourze\RoutingAutoLoaderBundle\Service\RoutingAutoLoaderInterface;
 use Tourze\WechatWorkMenuBundle\Service\AttributeControllerLoader;
 
-class AttributeControllerLoaderTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(AttributeControllerLoader::class)]
+#[RunTestsInSeparateProcesses]
+final class AttributeControllerLoaderTest extends AbstractIntegrationTestCase
 {
     private AttributeControllerLoader $loader;
 
-    public function test_loader_can_be_instantiated(): void
+    protected function onSetUp(): void
     {
-        // Assert
-        $this->assertInstanceOf(AttributeControllerLoader::class, $this->loader);
+        $this->loader = self::getService(AttributeControllerLoader::class);
     }
 
-    public function test_load_method_returns_route_collection(): void
+    public function testLoaderImplementsCorrectInterfaces(): void
+    {
+        // Assert - 验证实现了必要的接口
+        $this->assertInstanceOf(RoutingAutoLoaderInterface::class, $this->loader);
+        $this->assertInstanceOf(Loader::class, $this->loader);
+    }
+
+    public function testLoadMethodDelegatesToAutoload(): void
     {
         // Act
-        $result = $this->loader->load('dummy_resource');
+        $loadResult = $this->loader->load('dummy_resource');
+        $autoloadResult = $this->loader->autoload();
 
-        // Assert
-        $this->assertInstanceOf(RouteCollection::class, $result);
+        // Assert - 验证 load 方法实际上调用了 autoload
+        $this->assertInstanceOf(RouteCollection::class, $loadResult);
+        $this->assertEquals($autoloadResult->all(), $loadResult->all());
     }
 
-    public function test_autoload_method_returns_route_collection(): void
+    public function testAutoloadMethodLoadsControllerRoutes(): void
     {
         // Act
         $result = $this->loader->autoload();
 
-        // Assert
+        // Assert - 验证返回有效的路由集合
         $this->assertInstanceOf(RouteCollection::class, $result);
+        // 验证路由集合不为空（如果控制器有路由的话）
+        $routes = $result->all();
+        $this->assertIsArray($routes);
     }
 
-    public function test_supports_method_returns_false(): void
+    public function testSupportsMethodReturnsFalse(): void
     {
         // Act
         $result = $this->loader->supports('any_resource');
@@ -45,7 +65,7 @@ class AttributeControllerLoaderTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_supports_method_with_type_returns_false(): void
+    public function testSupportsMethodWithTypeReturnsFalse(): void
     {
         // Act
         $result = $this->loader->supports('any_resource', 'any_type');
@@ -54,17 +74,13 @@ class AttributeControllerLoaderTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_load_with_null_type(): void
+    public function testLoadWithNullTypeWorksIdentically(): void
     {
         // Act
-        $result = $this->loader->load('dummy_resource', null);
+        $resultWithNull = $this->loader->load('dummy_resource', null);
+        $resultWithoutType = $this->loader->load('dummy_resource');
 
-        // Assert
-        $this->assertInstanceOf(RouteCollection::class, $result);
+        // Assert - 验证 null 类型参数不影响结果
+        $this->assertEquals($resultWithNull->all(), $resultWithoutType->all());
     }
-
-    protected function setUp(): void
-    {
-        $this->loader = new AttributeControllerLoader();
-    }
-} 
+}

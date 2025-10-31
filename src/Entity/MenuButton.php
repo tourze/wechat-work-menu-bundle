@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\WechatWorkMenuBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Stringable;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\Arrayable\ApiArrayInterface;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
@@ -21,17 +23,19 @@ use Tourze\WechatWorkMenuBundle\Repository\MenuButtonRepository;
 
 /**
  * @see https://developer.work.weixin.qq.com/document/path/90231
+ * @implements ApiArrayInterface<string, mixed>
  */
 #[ORM\Entity(repositoryClass: MenuButtonRepository::class)]
 #[ORM\Table(name: 'wechat_work_menu_button', options: ['comment' => '菜单按钮'])]
-class MenuButton implements ApiArrayInterface, Stringable
+class MenuButton implements ApiArrayInterface, \Stringable
 {
     use TimestampableAware;
     use BlameableAware;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
-    private ?int $id = 0;
+    private ?int $id = null;
 
     #[ORM\ManyToOne]
     private ?AgentInterface $agent = null;
@@ -40,41 +44,53 @@ class MenuButton implements ApiArrayInterface, Stringable
     #[ORM\JoinColumn(nullable: false)]
     private ?CorpInterface $corp = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 120)]
     #[ORM\Column(type: Types::STRING, length: 120, options: ['comment' => '标签名'])]
     private string $name;
 
+    #[Assert\Choice(callback: [MenuButtonType::class, 'cases'])]
     #[ORM\Column(length: 40, nullable: true, enumType: MenuButtonType::class, options: ['comment' => '按钮类型'])]
     private ?MenuButtonType $type = null;
 
+    #[Assert\Length(max: 120)]
     #[ORM\Column(length: 120, nullable: true, options: ['comment' => '点击键值'])]
     private ?string $clickKey = null;
 
+    #[Assert\Length(max: 255)]
+    #[Assert\Url]
     #[ORM\Column(length: 255, nullable: true, options: ['comment' => '网页链接'])]
     private ?string $viewUrl = null;
 
+    #[Assert\Length(max: 20)]
     #[ORM\Column(length: 20, nullable: true, options: ['comment' => '小程序AppId'])]
     private ?string $miniProgramAppId = null;
 
+    #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255, nullable: true, options: ['comment' => '小程序路径'])]
     private ?string $miniProgramPath = null;
 
-    #[ORM\ManyToOne(targetEntity: MenuButton::class)]
+    #[ORM\ManyToOne(targetEntity: MenuButton::class, cascade: ['persist'])]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?MenuButton $parent = null;
 
+    /**
+     * @var Collection<int, MenuButton>
+     */
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: MenuButton::class)]
     private Collection $children;
 
+    #[Assert\PositiveOrZero]
     #[IndexColumn]
     #[Groups(groups: ['admin_curd', 'api_tree', 'restful_read', 'restful_write'])]
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['default' => '0', 'comment' => '次序值'])]
     private ?int $sortNumber = 0;
 
+    #[Assert\Type(type: 'bool')]
     #[IndexColumn]
     #[TrackColumn]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
     private ?bool $valid = false;
-
 
     public function __construct()
     {
@@ -91,11 +107,9 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
     public function getAgent(): ?AgentInterface
@@ -103,11 +117,9 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->agent;
     }
 
-    public function setAgent(?AgentInterface $agent): static
+    public function setAgent(?AgentInterface $agent): void
     {
         $this->agent = $agent;
-
-        return $this;
     }
 
     public function getCorp(): ?CorpInterface
@@ -115,11 +127,9 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->corp;
     }
 
-    public function setCorp(?CorpInterface $corp): static
+    public function setCorp(?CorpInterface $corp): void
     {
         $this->corp = $corp;
-
-        return $this;
     }
 
     public function getType(): ?MenuButtonType
@@ -127,11 +137,9 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->type;
     }
 
-    public function setType(?MenuButtonType $type): static
+    public function setType(?MenuButtonType $type): void
     {
         $this->type = $type;
-
-        return $this;
     }
 
     public function getClickKey(): ?string
@@ -139,11 +147,9 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->clickKey;
     }
 
-    public function setClickKey(?string $clickKey): static
+    public function setClickKey(?string $clickKey): void
     {
         $this->clickKey = $clickKey;
-
-        return $this;
     }
 
     public function getViewUrl(): ?string
@@ -151,11 +157,9 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->viewUrl;
     }
 
-    public function setViewUrl(?string $viewUrl): static
+    public function setViewUrl(?string $viewUrl): void
     {
         $this->viewUrl = $viewUrl;
-
-        return $this;
     }
 
     public function getMiniProgramAppId(): ?string
@@ -163,11 +167,9 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->miniProgramAppId;
     }
 
-    public function setMiniProgramAppId(?string $miniProgramAppId): static
+    public function setMiniProgramAppId(?string $miniProgramAppId): void
     {
         $this->miniProgramAppId = $miniProgramAppId;
-
-        return $this;
     }
 
     public function getMiniProgramPath(): ?string
@@ -175,11 +177,9 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->miniProgramPath;
     }
 
-    public function setMiniProgramPath(?string $miniProgramPath): static
+    public function setMiniProgramPath(?string $miniProgramPath): void
     {
         $this->miniProgramPath = $miniProgramPath;
-
-        return $this;
     }
 
     public function getParent(): ?MenuButton
@@ -187,11 +187,9 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->parent;
     }
 
-    public function setParent(?MenuButton $parent): self
+    public function setParent(?MenuButton $parent): void
     {
         $this->parent = $parent;
-
-        return $this;
     }
 
     /**
@@ -202,17 +200,15 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->children;
     }
 
-    public function addChild(MenuButton $child): static
+    public function addChild(MenuButton $child): void
     {
         if (!$this->children->contains($child)) {
             $this->children->add($child);
             $child->setParent($this);
         }
-
-        return $this;
     }
 
-    public function removeChild(MenuButton $child): static
+    public function removeChild(MenuButton $child): void
     {
         if ($this->children->removeElement($child)) {
             // set the owning side to null (unless already changed)
@@ -220,8 +216,6 @@ class MenuButton implements ApiArrayInterface, Stringable
                 $child->setParent(null);
             }
         }
-
-        return $this;
     }
 
     public function getSortNumber(): ?int
@@ -229,11 +223,9 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->sortNumber;
     }
 
-    public function setSortNumber(?int $sortNumber): self
+    public function setSortNumber(?int $sortNumber): void
     {
         $this->sortNumber = $sortNumber;
-
-        return $this;
     }
 
     public function isValid(): ?bool
@@ -241,14 +233,14 @@ class MenuButton implements ApiArrayInterface, Stringable
         return $this->valid;
     }
 
-    public function setValid(?bool $valid): self
+    public function setValid(?bool $valid): void
     {
         $this->valid = $valid;
-
-        return $this;
     }
 
-
+    /**
+     * @return array<string, mixed>
+     */
     public function retrieveApiArray(): array
     {
         if ($this->getChildren()->count() > 0) {
