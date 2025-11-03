@@ -13,6 +13,7 @@ use Tourze\DoctrineTrackBundle\DoctrineTrackBundle;
 use Tourze\DoctrineUserBundle\DoctrineUserBundle;
 use Tourze\RoutingAutoLoaderBundle\RoutingAutoLoaderBundle;
 use WechatWorkBundle\WechatWorkBundle;
+use Tourze\EasyAdminMenuBundle\EasyAdminMenuBundle;
 
 class WechatWorkMenuBundle extends Bundle implements BundleDependencyInterface
 {
@@ -26,6 +27,7 @@ class WechatWorkMenuBundle extends Bundle implements BundleDependencyInterface
             DoctrineUserBundle::class => ['all' => true],
             WechatWorkBundle::class => ['all' => true],
             RoutingAutoLoaderBundle::class => ['all' => true],
+            EasyAdminMenuBundle::class => ['all' => true],
         ];
     }
 }
