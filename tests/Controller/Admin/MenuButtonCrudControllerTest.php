@@ -80,7 +80,7 @@ final class MenuButtonCrudControllerTest extends AbstractEasyAdminControllerTest
     /**
      * 重写 setUp 方法来设置测试客户端上下文
      */
-    protected function onSetUp(): void
+    protected function afterEasyAdminSetUp(): void
     {
         // 创建一个默认客户端以满足测试框架的要求
         if (!self::$booted) {
