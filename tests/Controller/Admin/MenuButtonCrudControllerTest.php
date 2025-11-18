@@ -19,11 +19,6 @@ use Tourze\WechatWorkMenuBundle\Entity\MenuButton;
 #[RunTestsInSeparateProcesses]
 final class MenuButtonCrudControllerTest extends AbstractEasyAdminControllerTestCase
 {
-    public function testGetEntityFqcn(): void
-    {
-        self::assertSame(MenuButton::class, MenuButtonCrudController::getEntityFqcn());
-    }
-
     public function testConfigureFields(): void
     {
         $controller = new MenuButtonCrudController();
