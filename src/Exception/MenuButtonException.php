@@ -7,6 +7,6 @@ namespace Tourze\WechatWorkMenuBundle\Exception;
 /**
  * 菜单按钮异常类
  */
-class MenuButtonException extends \RuntimeException
+final class MenuButtonException extends \RuntimeException
 {
 }

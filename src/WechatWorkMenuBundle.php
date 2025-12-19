@@ -15,7 +15,7 @@ use Tourze\RoutingAutoLoaderBundle\RoutingAutoLoaderBundle;
 use WechatWorkBundle\WechatWorkBundle;
 use Tourze\EasyAdminMenuBundle\EasyAdminMenuBundle;
 
-class WechatWorkMenuBundle extends Bundle implements BundleDependencyInterface
+final class WechatWorkMenuBundle extends Bundle implements BundleDependencyInterface
 {
     public static function getBundleDependencies(): array
     {

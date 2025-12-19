@@ -13,7 +13,7 @@ use Tourze\WechatWorkMenuBundle\Entity\MenuButton;
  * @extends ServiceEntityRepository<MenuButton>
  */
 #[AsRepository(entityClass: MenuButton::class)]
-class MenuButtonRepository extends ServiceEntityRepository
+final class MenuButtonRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

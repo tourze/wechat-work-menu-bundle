@@ -15,7 +15,7 @@ use WechatWorkBundle\Entity\Corp;
 
 #[When(env: 'test')]
 #[When(env: 'dev')]
-class MenuButtonFixtures extends Fixture implements DependentFixtureInterface
+final class MenuButtonFixtures extends Fixture implements DependentFixtureInterface
 {
     public const MENU_BUTTON_REFERENCE_PREFIX = 'menu_button_';
 

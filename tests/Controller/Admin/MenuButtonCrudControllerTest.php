@@ -153,8 +153,9 @@ final class MenuButtonCrudControllerTest extends AbstractEasyAdminControllerTest
     public function testCustomEditPagePrefillsExistingData(): void
     {
         $client = self::createClientWithDatabase();
-        $this->createAdminUser('admin@test.com', 'password123');
-        $this->loginAsAdmin($client, 'admin@test.com', 'password123');
+        // 直接使用内存中的admin用户登录
+        $adminUser = new \Symfony\Component\Security\Core\User\InMemoryUser('admin', 'password', ['ROLE_ADMIN']);
+        $client->loginUser($adminUser, 'main');
 
         try {
             $crawler = $client->request('GET', $this->generateAdminUrl('index'));
@@ -198,8 +199,9 @@ final class MenuButtonCrudControllerTest extends AbstractEasyAdminControllerTest
     public function testValidationErrors(): void
     {
         $client = self::createClientWithDatabase();
-        $this->createAdminUser('admin@test.com', 'password123');
-        $this->loginAsAdmin($client, 'admin@test.com', 'password123');
+        // 直接使用内存中的admin用户登录
+        $adminUser = new \Symfony\Component\Security\Core\User\InMemoryUser('admin', 'password', ['ROLE_ADMIN']);
+        $client->loginUser($adminUser, 'main');
 
         // 访问创建页面
         $crawler = $client->request('GET', $this->generateAdminUrl('new'));
